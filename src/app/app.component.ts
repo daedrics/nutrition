@@ -7,4 +7,10 @@ import { Component } from '@angular/core';
 })
 export class AppComponent {
   title = 'nutrition';
+
+  links = [
+    {path: 'recipe',label: 'Recipe'},
+    {path: 'ingredient',label: 'Ingredient'}
+  ]
+
 }
