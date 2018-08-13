@@ -1,54 +1,57 @@
 <div class="row">
-  <div class="col-md-12">   
+    <div class="col-md-12">
         <form class="form">
-          <mat-form-field class="full-width">
-            <input matInput placeholder="Recipe Title" #recipeTitle>
-          </mat-form-field>
+            <mat-form-field class="full-width">
+                <input matInput placeholder="Recipe Title" #recipeTitle>
+            </mat-form-field>
 
-          <mat-card class="big-input mb-3" [ngClass]="{ 'has-focus': hasFocus }">
-            <input (focus)="hasFocus = true" #ingredient (blur)="hasFocus = false" (keyup.enter)="addIngredient(ingredient.value); ingredient.value = ''" placeholder="Add Ingredient">
-            <button type="button" mat-icon-button  (click)="addIngredient(ingredient.value); ingredient.value = ''">
-              <mat-icon aria-label="Add Ingredient">add_box</mat-icon>
-            </button>
-          </mat-card>
-
-          <mat-card *ngFor="let ingredient of ingredients" class="ingredient mb-3">
-            
-              <button type="button" mat-icon-button (click)="deleteIngredient(ingredient)">
-                  <mat-icon aria-label="Add Ingredient">delete</mat-icon>
+            <mat-card class="big-input mb-3" [ngClass]="{ 'has-focus': hasFocus }">
+                <input (focus)="hasFocus = true" #ingredient (blur)="hasFocus = false"
+                       (keyup.enter)="addIngredient(ingredient.value); ingredient.value = ''"
+                       placeholder="Add Ingredient">
+                <button type="button" mat-icon-button (click)="addIngredient(ingredient.value); ingredient.value = ''">
+                    <mat-icon aria-label="Add Ingredient">add_box</mat-icon>
                 </button>
-            <span class="todo-label">
-              &nbsp;{{ingredient.name}}&nbsp;
-            </span>
-          </mat-card>
+            </mat-card>
+
+            <mat-card *ngFor="let ingredient of ingredients" class="ingredient mb-3">
+                <button type="button" mat-icon-button (click)="deleteIngredient(ingredient)">
+                    <mat-icon aria-label="Add Ingredient">delete</mat-icon>
+                </button>
+                <span>
+              &nbsp;    {{ingredient.name}}&nbsp;
+                </span>
+            </mat-card>
         </form>
-    <div class="row">
-      <div class="col-md-12">
-        <button mat-raised-button color="primary" class="mr-2" (click)="postRecipe(recipeTitle.value)">Post Recipe</button>
-        <button mat-raised-button color="warn" (click)="resetFields();recipeTitle.value=''">Reset</button>
-      </div>
+        <div class="row">
+            <div class="col-md-12">
+                <button mat-raised-button color="primary" class="mr-2" (click)="postRecipe(recipeTitle.value)">Post
+                    Recipe
+                </button>
+                <button mat-raised-button color="warn" (click)="resetFields();recipeTitle.value=''">Reset</button>
+            </div>
+        </div>
+
     </div>
 
-  </div>
+    <div class="col-md-12">
+        <div class="d-flex justify-content-center">
+            <h2>Nutrition Data</h2>
+        </div>
+        <div class="d-flex justify-content-center">
+            <mat-spinner *ngIf="loading"></mat-spinner>
+        </div>
 
-  <div class="col-md-12">
-    <div class="d-flex justify-content-center">
-        <h2>Nutrition Data</h2>
-    </div>
-    <div class="d-flex justify-content-center">
-        <mat-spinner *ngIf="loading"></mat-spinner>
-    </div>
-     
-      <div class="col-md-12">
-        <h4>Health Labels</h4>
-          <mat-chip-list>
-              <mat-chip color="primary" selected *ngFor="let healthLabel of healthLabels">{{healthLabel}}</mat-chip>
+        <div class="col-md-12">
+            <h4>Health Labels</h4>
+            <mat-chip-list>
+                <mat-chip color="primary" selected *ngFor="let healthLabel of healthLabels">{{healthLabel}}</mat-chip>
             </mat-chip-list>
-      </div>
+        </div>
 
-      <div class="col-md-12 mt-4">
-          <app-table [dataSource]="dataSource"></app-table>
-      </div>
-  </div>
+        <div class="col-md-12 mt-4">
+            <app-table [dataSource]="dataSource"></app-table>
+        </div>
+    </div>
 
 </div>
