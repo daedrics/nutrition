@@ -10,7 +10,8 @@ export class AppComponent {
 
   links = [
     {path: 'recipe',label: 'Recipe'},
-    {path: 'ingredient',label: 'Ingredient'}
+    {path: 'ingredient',label: 'Ingredient'},
+    {path: 'compare',label: 'Compare'},
   ]
 
 }

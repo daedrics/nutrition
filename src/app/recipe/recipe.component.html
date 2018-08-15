@@ -1,6 +1,6 @@
 <div class="row">
     <div class="col-md-12">
-        <form class="form">
+        <div class="form">
             <mat-form-field class="full-width">
                 <input matInput placeholder="Recipe Title" #recipeTitle>
             </mat-form-field>
@@ -22,7 +22,7 @@
               &nbsp;    {{ingredient.name}}&nbsp;
                 </span>
             </mat-card>
-        </form>
+        </div>
         <div class="row">
             <div class="col-md-12">
                 <button mat-raised-button color="primary" class="mr-2" (click)="postRecipe(recipeTitle.value)">Post
@@ -31,7 +31,6 @@
                 <button mat-raised-button color="warn" (click)="resetFields();recipeTitle.value=''">Reset</button>
             </div>
         </div>
-
     </div>
 
     <div class="col-md-12">
@@ -45,7 +44,9 @@
         <div class="col-md-12">
             <h4>Health Labels</h4>
             <mat-chip-list>
-                <mat-chip color="primary" selected *ngFor="let healthLabel of healthLabels">{{healthLabel}}</mat-chip>
+                <mat-chip color="primary" selected *ngFor="let healthLabel of healthLabels">{{healthLabel |
+                    healthLabelPipe}}
+                </mat-chip>
             </mat-chip-list>
         </div>
 

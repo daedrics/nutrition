@@ -18,7 +18,6 @@ export class IngredientComponent implements OnInit {
     loading = false;
     healthLabels = [];
     dataSource: Nutrition[] = [];
-    ELEMENT_DATA = [];
 
     constructor(public snackBar: MatSnackBar,
                 private recipeService: RecipeService) {
@@ -49,15 +48,16 @@ export class IngredientComponent implements OnInit {
         this.loading = true;
         this.recipeService.getIngredient(ingredient).subscribe(nutritionData => {
             this.healthLabels = nutritionData.healthLabels;
-            this.formatDataSource(nutritionData.totalNutrients);
-            this.dataSource = this.ELEMENT_DATA;
+            this.dataSource = this.formatDataSource(nutritionData.totalNutrients);
             this.loading = false;
         })
     }
 
     formatDataSource(totalNutrients) {
+        let data = [];
         for (let nutrient in totalNutrients) {
-            this.ELEMENT_DATA.push(totalNutrients[nutrient]);
+            data.push(totalNutrients[nutrient]);
         }
+        return data;
     }
 }
