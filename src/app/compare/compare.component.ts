@@ -1,5 +1,6 @@
-import {Component, OnInit} from '@angular/core';
-import {RecipeService} from "../recipe.service";
+import { Component, OnInit } from '@angular/core';
+import { RecipeService } from "../recipe.service";
+import {MatSnackBar} from "@angular/material";
 
 @Component({
     selector: 'app-compare',
@@ -9,54 +10,172 @@ import {RecipeService} from "../recipe.service";
 export class CompareComponent implements OnInit {
 
 
-    constructor(private recipeService: RecipeService) {
+    constructor(private recipeService: RecipeService,public snackBar: MatSnackBar) {
     }
 
     options: any;
+    source: any = [];
+    units: any = [];
+    loading = false;
+    firstIngredientData: any;
+    firstIngredientDataSource: any = [];
+    secondIgredientData: any;
+    secondIgredientDataSource: any = [];
+
 
     ngOnInit() {
-        this.options = {
-            legend: {},
-            tooltip: {
-                formatter: function (params, ticket, callback) {
-                    console.log(params)
-                    return 'aa'
-                }
-            },
-            dataset: {
-                source: [
-                    ['nutrition', 'kCal', '2013', '2014', '2015'],
-                    ['Matcha Latte', 41.1, 30.4, 65.1, 0],
-                    ['Milk Tea', 86.5, 92.1, 85.7, 83.1],
-
-                ]
-            },
-            xAxis: [
-                {type: 'category', gridIndex: 0},
-
-            ],
-            yAxis: [
-                {gridIndex: 0},
-            ],
-            grid: [
-                {bottom: '55%'},
-                {top: '55%'}
-            ],
-            series: [
-                // These series are in the first grid.
-                {type: 'bar', seriesLayoutBy: 'row'},
-                {type: 'bar', seriesLayoutBy: 'row'},
-            ]
-        };
+        
     }
 
     getIngredientsData(firstIngredient, secondIngredient) {
+        
+
+        if(firstIngredient === ''){
+            this.openSnackBar('First ingredient is required!','Done');
+            return;
+        }
+
+        if(secondIngredient === ''){
+            this.openSnackBar('Second ingredient is required!','Done');
+            return;
+        }
+        this.reset();
+        this.loading = true;
         this.recipeService.getIngredient(firstIngredient).subscribe(firstIngredientData => {
-            console.log(firstIngredientData);
+            this.formatSource(firstIngredientData.totalNutrients);
+            this.firstIngredientData = firstIngredientData.totalNutrients;
             this.recipeService.getIngredient(secondIngredient).subscribe(secondIngredientData => {
-                console.log(secondIngredientData);
+                this.secondIgredientData = secondIngredientData.totalNutrients;
+                this.formatSource(secondIngredientData.totalNutrients);
+                this.formatFirstIngredientData(firstIngredient);
+                this.formatSecondIngredientData(secondIngredient);
+                let that = this;
+                this.loading = false;
+                this.options = {
+                    legend: {},
+                    tooltip: {
+                        formatter: function (params, ticket, callback) {
+                            let label = params.name;
+                            let value = params.data[params.seriesIndex + 1];
+                            let name = params.seriesName;
+                            let seriesUnit = '';
+                            for(let unit in that.units){
+                                if(label === unit){
+                                    seriesUnit = that.units[unit];
+                                    break;
+                                }
+                            }
+                            return name + ': '+ label + ' '+ value + ' ' + seriesUnit;
+                        }
+                    },
+                    dataZoom: [
+                        {
+                            show: true,
+                            start: 0,
+                            end: 100
+                        },
+                        {
+                            type: 'inside',
+                            start: 0,
+                            end: 100
+                        },
+                        {
+                            show: true,
+                            yAxisIndex: 0,
+                            filterMode: 'empty',
+                            width: 30,
+                            height: '80%',
+                            showDataShadow: false,
+                            left: '93%'
+                        }
+                    ],
+                    dataset: {
+                        source: [
+                            this.source,
+                            this.firstIngredientDataSource,
+                            this.secondIgredientDataSource,
+        
+                        ]
+                    },
+                    xAxis: [
+                        { type: 'category', gridIndex: 0 },
+        
+                    ],
+                    yAxis: [
+                        { gridIndex: 0 },
+                    ],
+                    grid: [
+                        { bottom: '55%' },
+                        { top: '55%' }
+                    ],
+                    series: [
+                        // These series are in the first grid.
+                        { type: 'bar', seriesLayoutBy: 'row' },
+                        { type: 'bar', seriesLayoutBy: 'row' },
+                    ]
+                };
+
             })
-        })
+        });
+    }
+
+
+    formatSource(nutritionData) {
+        this.source.push('nutrition');
+        for (let nutrition in nutritionData) {
+            let label = nutritionData[nutrition].label;
+            let unit = nutritionData[nutrition].unit;
+            if (this.source.indexOf(label) === -1) {
+                this.source.push(label);
+                this.units[label] = unit;
+            }
+        }
+    }
+
+    formatFirstIngredientData(ingredient) {
+        this.firstIngredientDataSource.push(ingredient);
+        let dataSource = this.firstIngredientData;
+        for (let label of this.source) {
+            for (let dataLabel in dataSource) {
+                let sourceLabel = dataSource[dataLabel].label;
+                let quantity = dataSource[dataLabel].quantity;
+                if (label === sourceLabel) {
+                    let index = this.source.indexOf(sourceLabel);
+                    this.firstIngredientDataSource[index] = quantity;
+                    break;
+                }
+            }
+        }
+    }
+
+    formatSecondIngredientData(ingredient) {
+        this.secondIgredientDataSource.push(ingredient);
+        let dataSource = this.secondIgredientData;
+        for (let label of this.source) {
+            for (let dataLabel in dataSource) {
+                let sourceLabel = dataSource[dataLabel].label;
+                let quantity = dataSource[dataLabel].quantity;
+                if (label === sourceLabel) {
+                    let index = this.source.indexOf(sourceLabel);
+                    this.secondIgredientDataSource[index] = quantity;
+                    break;
+                }
+            }
+        }
+    }
+
+
+    reset(){
+        this.options = {};
+        this.source = [];
+        this.firstIngredientDataSource = [];
+        this.secondIgredientDataSource = [];
+    }
+
+    openSnackBar(message: string, action: string) {
+        this.snackBar.open(message, action, {
+            duration: 2000
+        });
     }
 
 }

@@ -2,8 +2,7 @@
     <div class="col-md-12">
         <div class="form">
             <mat-form-field class="full-width">
-                <input matInput autocomplete="off" placeholder="First Ingredient (quantity, name of ingredient)"
-                       #firstIngredient>
+                <input matInput autocomplete="off" placeholder="First Ingredient (quantity, name of ingredient)" #firstIngredient>
             </mat-form-field>
 
             <mat-form-field class="full-width">
@@ -13,14 +12,19 @@
     </div>
 
     <div class="col-md-12">
-        <button mat-raised-button color="primary" class="mr-2"
-                (click)="getIngredientsData(firstIngredient.value,secondIngredient.value)">Compare Ingredients
+        <button mat-raised-button color="primary" class="mr-2" (click)="getIngredientsData(firstIngredient.value,secondIngredient.value)">Compare
+            Ingredients
         </button>
-        <button mat-raised-button color="warn" (click)="resetFields();firstIngredient.value='';secondIngredient.value">
+        <button mat-raised-button color="warn" (click)="reset();firstIngredient.value='';secondIngredient.value=''">
             Reset
         </button>
     </div>
 
+    <div class="col-md-12">
+        <div class="d-flex justify-content-center">
+            <mat-spinner *ngIf="loading"></mat-spinner>
+        </div>
+    </div>
 
     <div class="col-md-12">
         <div echarts [options]="options" class="demo-chart"></div>
